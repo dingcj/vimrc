@@ -2,6 +2,16 @@
 runtime bundle/pathogen/autoload/pathogen.vim
 execute pathogen#infect()
 
+function! MySys()
+    if has("win32")
+        return "win32"
+    elseif has("unix")
+        return "unix"
+    else
+        return "mac"
+    endif
+endfunction
+
 
 "Set mapleader
 let mapleader = ","
@@ -98,16 +108,17 @@ set t_Co=256
 
 if has("gui_running")
   set background=dark
-  "colorscheme solarized
-  colorscheme molokai 
+  colorscheme solarized
+  "colorscheme molokai 
   set lines=25 columns=85
 else
-  colorscheme darkburn
+  set background=dark
+  colorscheme molokai
 endif
 
 "gui set
 "set guifont=Powerline_Consolas:h14:cANSI:qDRAFT
-set guifont=Ubuntu\ Mono\ derivative\ Powerline\ 16
+set guifont=Ubuntu\ Mono\ derivative\ Powerline\ 18
 
 set guioptions-=l
 set guioptions-=L
@@ -262,4 +273,22 @@ au FileType go nnoremap <leader>d :GoDescribe<CR>
 let g:go_list_type = "quickfix"
 
 let g:go_fmt_command = "goimports"
+
+""ctrlp
+let g:ctrlp_working_path_mode = 'ra'
+
+if MySys() == "unix" || MySys() == "mac"
+    set wildignore+=*/tmp/*,*.so,*.swp,*.zip     " MacOSX/Linux
+    "let g:ctrlp_user_command = 'find %s -type f'        " MacOSX/Linux
+else
+    set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe  " Windows
+    "let g:ctrlp_user_command = 'dir %s /-n /b /s /a-d'  " Windows
+endif
+
+let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
+let g:ctrlp_custom_ignore = {
+  \ 'dir':  '\v[\/]\.(git|hg|svn)$',
+  \ 'file': '\v\.(exe|so|dll)$',
+  \ 'link': 'some_bad_symbolic_links',
+  \ }
 
